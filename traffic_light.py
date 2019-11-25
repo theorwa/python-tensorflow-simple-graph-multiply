@@ -24,8 +24,10 @@ def getPaths(label_images, orig_image):
 
 def crop_image(src, lst, label, data_file, labels_file):
 	row, col = lst[random.randint(0, len(lst)-1)]
-	data_file.write(bytearray(src[row-40:row+40, col-40:col+40]))
+	# data_file.write(bytearray(src[row-40:row+40, col-40:col+40]))
+	src[row-40:row+40, col-40:col+40].tofile(data_file)
 	labels_file.write(bytes(label.encode('charmap')))
+
 
 # ==========================================================================================
 
@@ -41,8 +43,8 @@ def run(label_images, orig_image):
 				img_orig = imread(orig_image[name_label])
 
 				width, height = img_label.shape
-				yes = np.argwhere( img_label[41:height-41, 41:width-41] == 19 ) + 40
-				no = np.argwhere( img_label[41:height-41, 41:width-41] != 19 ) + 40
+				yes = np.argwhere( img_label[40:height-40, 40:width-40] == 19 ) + 40
+				no = np.argwhere( img_label[40:height-40, 40:width-40] != 19 ) + 40
 
 				for _ in range(1):
 					if len(yes):
@@ -55,8 +57,7 @@ def run(label_images, orig_image):
 # ==========================================================================================
 
 def show_sample(fname, idx, crop_size):
-	# face_from_raw = np.fromfile(fname, dtype=np.uint8)
-	fp = np.memmap(fname, dtype='uint8', offset=idx*(81*81*3), shape=(crop_size, crop_size, 3))
+	fp = np.memmap(fname, dtype='uint8', offset=idx*(crop_size*crop_size*3), shape=(crop_size, crop_size, 3))
 	with open('labels.bin', 'r') as labelsfile:
 		print(labelsfile.read(idx))
 	plt.imshow(fp)
