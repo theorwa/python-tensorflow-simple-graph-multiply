@@ -4,21 +4,19 @@ import numpy as np
 from imageio import imread
 from matplotlib import pyplot as plt
 
-lable_images = {}; orig_image = {}
-
-train_lable_path = 'E:/Excellenteam-Brosh/course/GitHub/CityScapes/gtFine/train'
-train_orig_path = 'E:/Excellenteam-Brosh/course/GitHub/CityScapes/leftImg8bit/train'
+TRAIN_LABEL_PATH = 'E:/Excellenteam-Brosh/course/GitHub/CityScapes/gtFine/train'
+TRAIN_ORIG_PATH = 'E:/Excellenteam-Brosh/course/GitHub/CityScapes/leftImg8bit/train'
 
 # ==========================================================================================
 
-def getPaths(lable_images, orig_image):
+def getPaths(label_images, orig_image):
 
-	for r, d, f in os.walk(train_lable_path):
+	for r, d, f in os.walk(TRAIN_LABEL_PATH):
 		for file in f:
 			if 'labelIds' in file:
-				lable_images[''.join(file.split('_')[:3])] = os.path.join(r, file)
+				label_images[''.join(file.split('_')[:3])] = os.path.join(r, file)
 
-	for r, d, f in os.walk(train_orig_path):
+	for r, d, f in os.walk(TRAIN_ORIG_PATH):
 		for file in f:
 			orig_image[''.join(file.split('_')[:3])] = os.path.join(r, file)
 
@@ -31,20 +29,20 @@ def crop_image(src, lst, label, data_file, labels_file):
 
 # ==========================================================================================
 
-def run():
+def run(label_images, orig_image):
 
 	with open('data.bin', 'wb') as data, open('labels.bin', 'wb') as labels:
 
-		for name_lable, path_lable in lable_images.items():
+		for name_label, path_label in label_images.items():
 
-			if 'jena' in name_lable:
+			if 'jena' in name_label:
 
-				img_lable = imread(path_lable);
-				img_orig = imread(orig_image[name_lable])
+				img_label = imread(path_label);
+				img_orig = imread(orig_image[name_label])
 
-				width, height = img_lable.shape
-				yes = np.argwhere( img_lable[41:height-41, 41:width-41] == 19 ) + 40
-				no = np.argwhere( img_lable[41:height-41, 41:width-41] != 19 ) + 40
+				width, height = img_label.shape
+				yes = np.argwhere( img_label[41:height-41, 41:width-41] == 19 ) + 40
+				no = np.argwhere( img_label[41:height-41, 41:width-41] != 19 ) + 40
 
 				for _ in range(1):
 					if len(yes):
@@ -67,6 +65,7 @@ def show_sample(fname, idx, crop_size):
 # ==========================================================================================
 
 if __name__ == '__main__':
-	getPaths(lable_images, orig_image)
-	run()
+	label_images = {}; orig_image = {}
+	getPaths(label_images, orig_image)
+	run(label_images, orig_image)
 	show_sample('data.bin', 3, 81)
